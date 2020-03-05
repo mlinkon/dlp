@@ -18,16 +18,16 @@ def deidentify_with_cdc(
     surrogate_type,
     key_name,
     wrapped_key,
-    data_items,
-    data_headers,
+    data_item,
+    data_headers=None,
     alphabet=None,
 
 ):
     """Uses the Data Loss Prevention API to deidentify sensitive data in a
     string using Format Preserving Encryption (FPE).
     Args:
-        project: The Google Cloud project id to use as a parent resource.
-        item: The string to deidentify (will be treated as text).
+        project: The Google Cloud project id to use as a parent resource in which DLP API is enabled.
+        data_item: The string to deidentify (will be treated as text).
         alphabet: The set of characters to replace sensitive ones with. For
             more information, see https://cloud.google.com/dlp/docs/reference/
             rest/v2beta2/organizations.deidentifyTemplates#ffxcommonnativealphabet
@@ -93,19 +93,19 @@ def deidentify_with_cdc(
     }
 
     # Construct the table dict
-    table_item = {
-        "table": {
-            "headers": [{"name": header} for header in data_headers], 
-            "rows": [{"values": [{"string_value": key}, {"string_value": value}]} for key, value in data_items.items()]
-        }
-    }
+    #table_item = {
+    #    "table": {
+    #        "headers": [{"name": header} for header in data_headers], 
+    #        "rows": [{"values": [{"string_value": key}, {"string_value": value}]} for key, value in data_items.items()]
+    #    }
+    #}
 
     # Call the API
     response = dlp.deidentify_content(
         parent,
         inspect_config=inspect_config,
         deidentify_config=deidentify_config,
-        item=table_item,
+        item=data_item,
     )
 
     return response.item.table
